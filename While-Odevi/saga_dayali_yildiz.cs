@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ilkders
+namespace while_odevi
 {
     internal class Program
     {

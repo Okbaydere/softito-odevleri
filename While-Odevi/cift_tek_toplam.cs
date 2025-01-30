@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ilkders
+namespace while_odevi
 {
     internal class Program
     {
@@ -16,21 +16,21 @@ namespace ilkders
             int sayi = int.Parse(Console.ReadLine());
             while (sayi > 0)
             {
-               if (sayi % 2 == 0)
-               {
-                   Cifttoplam += sayi;
-                   sayi--;
-               }
-               else
-               {
-                   tekToplam += sayi;
-                   sayi--;
-               }
+                if (sayi % 2 == 0)
+                {
+                    Cifttoplam += sayi;
+                    sayi--;
+                }
+                else
+                {
+                    tekToplam += sayi;
+                    sayi--;
+                }
             }
             Console.WriteLine($"Tek sayıların toplamı = {tekToplam}");
             Console.WriteLine($"Cift sayıların toplamı = {Cifttoplam}");
             Console.ReadLine();
-      
+
 
         }
     }

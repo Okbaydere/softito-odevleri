@@ -10,17 +10,16 @@ namespace while_odevi
     {
         static void Main(string[] args)
         {
-            int sayi;
-            int i = 1;
-            sayi = int.Parse(Console.ReadLine());
-
-            while (i <= sayi)
+            int i = 0;
+            Console.WriteLine("Kaç yıldızlı kare olsun?");
+            int yildiz = int.Parse(Console.ReadLine());
+            while (i < yildiz)
             {
-                int j = sayi;
-                while (j >= i)
+                int j = 0;
+                while (j < yildiz)
                 {
-                    Console.Write(i);
-                    j--;
+                    Console.Write("*");
+                    j++;
                 }
                 Console.WriteLine();
                 i++;
