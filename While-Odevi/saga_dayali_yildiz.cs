@@ -14,42 +14,24 @@ namespace ilkders
             int i = 1;
             int yildiz = Convert.ToInt32(Console.ReadLine());
 
-            while (i<= yildiz)
-            {  int k = yildiz - i;
-                while (k>0)
+            while (i <= yildiz)
+            {
+                int k = yildiz - i;
+                while (k > 0)
                 {
                     Console.Write(" ");
                     k--;
                 }
                 int j = 1;
-                while (j<=i)
+                while (j <= i)
                 {
                     Console.Write("*");
                     j++;
                 }
                 Console.WriteLine();
                 i++;
-                
+
             }
-
-
-            for (int i = 1; i <= yildiz; i++)
-            {
-
-                for (int k = yildiz - i; k > 0; k--)
-                {
-                    Console.Write(" ");
-                }
-
-                for (int j = 1; j <= i; j++)
-                {
-                    Console.Write("*");
-                }
-                Console.WriteLine();
-            }
-
-
-            
         }
     }
 }
