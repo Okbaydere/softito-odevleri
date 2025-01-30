@@ -1,0 +1,1 @@
+Derste For ile yapılan projelerin While ile yapılmış halleri.
