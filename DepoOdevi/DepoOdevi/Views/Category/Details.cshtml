@@ -1,0 +1,118 @@
+﻿@model Entity.Concrete.Category
+@{
+    ViewBag.Title = "Kategori Detayları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kategori Detayları</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Category")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+            <a href="@Url.Action("Edit", "Category", new { id = Model.CategoryId })" class="btn btn-info btn-sm">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Kategori Adı:</dt>
+                    <dd class="col-sm-8">@Model.CategoryName</dd>
+
+                    <dt class="col-sm-4">Açıklama:</dt>
+                    <dd class="col-sm-8">
+                        @if (string.IsNullOrEmpty(Model.Description))
+                        {
+                            <span class="text-muted">Açıklama bulunmuyor.</span>
+                        }
+                        else
+                        {
+                            @Model.Description
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4">Ürün Sayısı:</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.Products != null)
+                        {
+                            <span class="badge badge-info">@Model.Products.Count</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-secondary">0</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Bu Kategorideki Ürünler</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Products == null || Model.Products.Count == 0)
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Bu kategoride henüz ürün bulunmuyor.
+                            </div>
+                        }
+                        else
+                        {
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Ürün Adı</th>
+                                        <th>Marka</th>
+                                        <th>Stok</th>
+                                        <th>Satış Fiyatı</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Products)
+                                    {
+                                        <tr>
+                                            <td>@item.ProductName</td>
+                                            <td>@item.Brand</td>
+                                            <td>
+                                                @if (item.Stock <= item.MinimumStock)
+                                                {
+                                                    <span class="badge badge-danger">@item.Stock</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@item.Stock</span>
+                                                }
+                                            </td>
+                                            <td>@string.Format("{0:C2}", item.SalePrice)</td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-search"></i> Detay
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="@Url.Action("Delete", "Category", new { id = Model.CategoryId })" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Sil
+        </a>
+        <a href="@Url.Action("ByCategory", "Product", new { id = Model.CategoryId })" class="btn btn-success">
+            <i class="fas fa-list"></i> Ürünleri Gör
+        </a>
+    </div>
+</div> 

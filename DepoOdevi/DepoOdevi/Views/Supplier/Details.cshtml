@@ -1,0 +1,92 @@
+﻿@model Entity.Concrete.Supplier
+@{
+    ViewBag.Title = "Tedarikçi Detayları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Tedarikçi Detayları</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Supplier")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Tedarikçi Listesine Dön
+            </a>
+            <a href="@Url.Action("Edit", "Supplier", new { id = Model.SupplierId })" class="btn btn-info btn-sm">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Firma Adı:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.CompanyName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">İletişim Kişisi:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.ContactName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Telefon:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Phone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">E-posta:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Email</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Adres:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Address</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            <hr />
+            <h4>Bu Tedarikçiden Alınan Ürünler</h4>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Kategori</th>
+                        <th>Stok</th>
+                        <th>Alış Fiyatı</th>
+                        <th>Satış Fiyatı</th>
+                        <th>Son Alım Tarihi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Products)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td>@item.Stock</td>
+                            <td>@string.Format("{0:C2}", item.PurchasePrice)</td>
+                            <td>@string.Format("{0:C2}", item.SalePrice)</td>
+                            <td>@(item.LastPurchaseDate.HasValue ? item.LastPurchaseDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div> 

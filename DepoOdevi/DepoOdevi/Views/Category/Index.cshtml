@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Entity.Concrete.Category>
+@{
+    ViewBag.Title = "Kategoriler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kategori Listesi</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Create", "Category")" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Yeni Kategori Ekle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Kategori Adı</th>
+                    <th>Açıklama</th>
+                    <th>Ürün Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CategoryName</td>
+                        <td>@item.Description</td>
+                        <td>
+                            @if (item.Products != null)
+                            {
+                                <span class="badge badge-info">@item.Products.Count</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-secondary">0</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Category", new { id = item.CategoryId })" class="btn btn-info btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a href="@Url.Action("Details", "Category", new { id = item.CategoryId })" class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i> Detay
+                            </a>
+                            <a href="@Url.Action("Delete", "Category", new { id = item.CategoryId })" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Sil
+                            </a>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> 

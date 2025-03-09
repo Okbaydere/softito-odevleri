@@ -1,0 +1,118 @@
+﻿@model Entity.Concrete.Shipping
+@{
+    ViewBag.Title = "Kargo Ekle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Yeni Kargo Ekle</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Shipping")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Kargo Listesine Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+                {
+                    <div class="alert alert-danger">
+                        <h5><i class="icon fas fa-ban"></i> Hata!</h5>
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    </div>
+                }
+                else
+                {
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                }
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.CargoCompany, "Kargo Firması", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.CargoCompany, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CargoCompany, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.TrackingNumber, "Takip Numarası", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.TrackingNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TrackingNumber, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ReceiverName, "Alıcı Adı", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ReceiverName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ReceiverName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ReceiverPhone, "Alıcı Telefonu", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ReceiverPhone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ReceiverPhone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ShippingAddress, "Teslimat Adresi", new { @class = "control-label" })
+                            @Html.TextAreaFor(model => model.ShippingAddress, new { @class = "form-control", rows = 3 })
+                            @Html.ValidationMessageFor(model => model.ShippingAddress, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Status, "Durum", new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Status, new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Hazırlanıyor", Value = "Hazırlanıyor", Selected = true },
+                                new SelectListItem { Text = "Kargoya Verildi", Value = "Kargoya Verildi" },
+                                new SelectListItem { Text = "Teslim Edildi", Value = "Teslim Edildi" }
+                            }, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <h4>Stok Bilgileri</h4>
+                <p class="text-muted">Bu kargo ile ilişkilendirilecek ürün ve stok bilgilerini girin.</p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">Ürün</label>
+                            @Html.DropDownList("productId", ViewBag.ProductList as SelectList, "-- Ürün Seçin --", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">Miktar</label>
+                            <input type="number" name="quantity" class="form-control" min="1" value="1" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">İşlemi Yapan</label>
+                            @Html.DropDownList("employeeId", ViewBag.EmployeeList as SelectList, "-- Çalışan Seçin --", new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+} 

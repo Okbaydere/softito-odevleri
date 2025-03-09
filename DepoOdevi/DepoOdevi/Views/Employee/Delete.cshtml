@@ -1,0 +1,105 @@
+﻿@model Entity.Concrete.Employee
+@{
+    ViewBag.Title = "Çalışan Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h3 class="card-title">Çalışan Silme Onayı</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Çalışan Listesine Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <h4><i class="fas fa-exclamation-triangle"></i> Uyarı!</h4>
+            <p>Bu çalışanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+            <p>Eğer bu çalışana ait stok hareketleri varsa, bu işlem engellenebilir veya ilişkili kayıtlar da silinebilir.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Ad:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.FirstName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Soyad:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.LastName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Görev:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Task</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Uyruk:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@(string.IsNullOrEmpty(Model.Nation) ? "-" : Model.Nation)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Telefon:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Phone</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">E-posta:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Mail</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Adres:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@(string.IsNullOrEmpty(Model.Address) ? "-" : Model.Address)</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Başlangıç Tarihi:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.StartDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.StockMovements != null && Model.StockMovements.Any())
+        {
+            <div class="alert alert-danger mt-3">
+                <i class="fas fa-exclamation-circle"></i> <strong>Dikkat:</strong> Bu çalışana ait @Model.StockMovements.Count() adet stok hareketi bulunmaktadır. Silme işlemi bu hareketleri etkileyebilir.
+            </div>
+        }
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Çalışanı Sil
+                </button>
+                <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,131 @@
+﻿@model Entity.Concrete.StockMovement
+@{
+    ViewBag.Title = "Stok Hareketi Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Stok Hareketi Detayı</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "StockMovement")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Stok Hareketleri Listesine Dön
+            </a>
+            <a href="@Url.Action("Edit", "StockMovement", new { id = Model.StockMovementId })" class="btn btn-info btn-sm">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Ürün:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Product.ProductName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Hareket Tipi:</label>
+                    <div class="col-md-8">
+                        @if (Model.MovementType == "Giriş")
+                        {
+                            <span class="badge bg-success">@Model.MovementType</span>
+                        }
+                        else if (Model.MovementType == "Çıkış")
+                        {
+                            <span class="badge bg-danger">@Model.MovementType</span>
+                        }
+                        else if (Model.MovementType == "Sayım")
+                        {
+                            <span class="badge bg-info">@Model.MovementType</span>
+                        }
+                        else if (Model.MovementType == "Satış")
+                        {
+                            <span class="badge bg-primary">@Model.MovementType</span>
+                        }
+                        else if (Model.MovementType == "İade")
+                        {
+                            <span class="badge bg-warning">@Model.MovementType</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@Model.MovementType</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Miktar:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.Quantity</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Çalışan:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@($"{Model.Employee.FirstName} {Model.Employee.LastName}")</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Tarih:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.MovementDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Birim Fiyat:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@(Model.UnitPrice.HasValue ? string.Format("{0:C2}", Model.UnitPrice) : "-")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="form-group row mb-3">
+                    <label class="col-md-2 col-form-label font-weight-bold">Açıklama:</label>
+                    <div class="col-md-10">
+                        <p class="form-control-static">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title">Ürün Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Kategori:</strong> @Model.Product.Category.CategoryName</p>
+                                <p><strong>Marka:</strong> @(string.IsNullOrEmpty(Model.Product.Brand) ? "-" : Model.Product.Brand)</p>
+                                <p><strong>Barkod:</strong> @(string.IsNullOrEmpty(Model.Product.Barcode) ? "-" : Model.Product.Barcode)</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Mevcut Stok:</strong> @Model.Product.Stock</p>
+                                <p><strong>Minimum Stok:</strong> @Model.Product.MinimumStock</p>
+                                <p><strong>Tedarikçi:</strong> @Model.Product.Supplier.CompanyName</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Alış Fiyatı:</strong> @string.Format("{0:C2}", Model.Product.PurchasePrice)</p>
+                                <p><strong>Satış Fiyatı:</strong> @string.Format("{0:C2}", Model.Product.SalePrice)</p>
+                                <p><strong>Son Alım Tarihi:</strong> @(Model.Product.LastPurchaseDate.HasValue ? Model.Product.LastPurchaseDate.Value.ToString("dd/MM/yyyy") : "-")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

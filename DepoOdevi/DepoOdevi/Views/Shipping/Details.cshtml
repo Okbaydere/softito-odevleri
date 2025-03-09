@@ -1,0 +1,152 @@
+﻿@model Entity.Concrete.Shipping
+@{
+    ViewBag.Title = "Kargo Detayları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kargo Detayları</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Shipping")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Kargo Listesine Dön
+            </a>
+            <a href="@Url.Action("Edit", "Shipping", new { id = Model.ShippingId })" class="btn btn-info btn-sm">
+                <i class="fas fa-edit"></i> Düzenle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Kargo Firması:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.CargoCompany</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Takip Numarası:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.TrackingNumber</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Alıcı Adı:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.ReceiverName</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Alıcı Telefonu:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.ReceiverPhone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Teslimat Adresi:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.ShippingAddress</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Gönderim Tarihi:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@Model.ShipmentDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Teslim Tarihi:</label>
+                    <div class="col-md-8">
+                        <p class="form-control-static">@(Model.ArriveDate.HasValue ? Model.ArriveDate.Value.ToString("dd/MM/yyyy") : "-")</p>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label font-weight-bold">Durum:</label>
+                    <div class="col-md-8">
+                        @if (Model.Status == "Hazırlanıyor")
+                        {
+                            <span class="badge bg-warning">@Model.Status</span>
+                        }
+                        else if (Model.Status == "Kargoya Verildi")
+                        {
+                            <span class="badge bg-info">@Model.Status</span>
+                        }
+                        else if (Model.Status == "Teslim Edildi")
+                        {
+                            <span class="badge bg-success">@Model.Status</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@Model.Status</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            <hr />
+            <h4>Bu Kargo ile Gönderilen Ürünler</h4>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Kategori</th>
+                        <th>Marka</th>
+                        <th>Barkod</th>
+                        <th>Alış Fiyatı</th>
+                        <th>Satış Fiyatı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Products)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td>@item.Brand</td>
+                            <td>@item.Barcode</td>
+                            <td>@string.Format("{0:C2}", item.PurchasePrice)</td>
+                            <td>@string.Format("{0:C2}", item.SalePrice)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <hr />
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Bu kargo ile ilişkilendirilmiş ürün bulunmamaktadır.
+            </div>
+        }
+
+        <div class="mt-4">
+            <div class="btn-group">
+                @if (Model.Status != "Kargoya Verildi")
+                {
+                    <a href="@Url.Action("ChangeStatus", "Shipping", new { id = Model.ShippingId, status = "Kargoya Verildi" })" class="btn btn-outline-info">
+                        <i class="fas fa-truck"></i> Kargoya Ver
+                    </a>
+                }
+                @if (Model.Status != "Teslim Edildi")
+                {
+                    <a href="@Url.Action("ChangeStatus", "Shipping", new { id = Model.ShippingId, status = "Teslim Edildi" })" class="btn btn-outline-success">
+                        <i class="fas fa-check"></i> Teslim Edildi
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

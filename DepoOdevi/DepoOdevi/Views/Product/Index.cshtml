@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Entity.Concrete.Product>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Ürün Listesi</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Create", "Product")" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Yeni Ürün Ekle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="text-right mb-3">
+            <span class="text-muted">Toplam @Model.Count() ürün</span>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>Kategori</th>
+                    <th>Marka</th>
+                    <th>Stok</th>
+                    <th>Alış Fiyatı</th>
+                    <th>Satış Fiyatı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Category.CategoryName</td>
+                        <td>@item.Brand</td>
+                        <td>
+                            @if (item.Stock <= item.MinimumStock)
+                            {
+                                <span class="badge badge-danger">@item.Stock</span>
+                            }
+                            else
+                            {
+                                <span>@item.Stock</span>
+                            }
+                        </td>
+                        <td>@string.Format("{0:C2}", item.PurchasePrice)</td>
+                        <td>@string.Format("{0:C2}", item.SalePrice)</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Product", new { id = item.ProductId })" class="btn btn-info btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i> Detay
+                            </a>
+                            <a href="@Url.Action("Delete", "Product", new { id = item.ProductId })" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Sil
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

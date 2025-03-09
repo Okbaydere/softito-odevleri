@@ -1,0 +1,69 @@
+@model Entity.Concrete.Product
+@{
+    ViewBag.Title = "Ürün Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h3 class="card-title">Ürün Silme Onayı</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <h4><i class="fas fa-exclamation-triangle"></i> Uyarı!</h4>
+            <p>
+                <strong>@Model.ProductName</strong> isimli ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Ürün Adı:</dt>
+                    <dd class="col-sm-8">@Model.ProductName</dd>
+
+                    <dt class="col-sm-4">Kategori:</dt>
+                    <dd class="col-sm-8">@(Model.Category != null ? Model.Category.CategoryName : "Belirtilmemiş")</dd>
+
+                    <dt class="col-sm-4">Marka:</dt>
+                    <dd class="col-sm-8">@Model.Brand</dd>
+
+                    <dt class="col-sm-4">Stok:</dt>
+                    <dd class="col-sm-8">@Model.Stock</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Alış Fiyatı:</dt>
+                    <dd class="col-sm-8">@string.Format("{0:C2}", Model.PurchasePrice)</dd>
+
+                    <dt class="col-sm-4">Satış Fiyatı:</dt>
+                    <dd class="col-sm-8">@string.Format("{0:C2}", Model.SalePrice)</dd>
+
+                    <dt class="col-sm-4">Barkod:</dt>
+                    <dd class="col-sm-8">@Model.Barcode</dd>
+                </dl>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("Delete", "Product", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ProductId)
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ürünü Sil
+                </button>
+                <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        }
+    </div>
+</div> 

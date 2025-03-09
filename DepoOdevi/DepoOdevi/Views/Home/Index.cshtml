@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "Depo Yönetimi Dashboard";
+}
+
+<div class="container">
+    <div class="jumbotron">
+        <h1>Depo Yönetimi Sistemi</h1>
+        <p>Stok durumu, hareketler ve kargolama işlemleri için genel bakış</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Düşük Stok Ürünleri</h3>
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.LowStockProducts != null && ViewBag.LowStockProducts.Count > 0)
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Stok</th>
+                                    <th>Min. Stok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var product in ViewBag.LowStockProducts)
+                                {
+                                    <tr>
+                                        <td>@product.ProductName</td>
+                                        <td>@product.Stock</td>
+                                        <td>@product.MinimumStock</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <a href="@Url.Action("LowStockProducts", "Home")" class="btn btn-danger btn-block">Tümünü Görüntüle</a>
+                    }
+                    else
+                    {
+                        <p>Düşük stok seviyesinde ürün bulunmamaktadır.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Son Stok Hareketleri</h3>
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.RecentMovements != null && ViewBag.RecentMovements.Count > 0)
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ürün ID</th>
+                                    <th>Tip</th>
+                                    <th>Miktar</th>
+                                    <th>Tarih</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var movement in ViewBag.RecentMovements)
+                                {
+                                    <tr>
+                                        <td>@movement.ProductId</td>
+                                        <td>@movement.MovementType</td>
+                                        <td>@movement.Quantity</td>
+                                        <td>@movement.MovementDate.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <a href="@Url.Action("Index", "StockMovement")" class="btn btn-info btn-block">Tüm Hareketleri Görüntüle</a>
+                    }
+                    else
+                    {
+                        <p>Henüz stok hareketi bulunmamaktadır.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Bekleyen Kargolar</h3>
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.PendingShipments != null && ViewBag.PendingShipments.Count > 0)
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Takip No</th>
+                                    <th>Durum</th>
+                                    <th>Tarih</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var shipping in ViewBag.PendingShipments)
+                                {
+                                    <tr>
+                                        <td>@shipping.TrackingNumber</td>
+                                        <td>@shipping.Status</td>
+                                        <td>@shipping.ShipmentDate.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <a href="@Url.Action("Index", "Shipping")" class="btn btn-warning btn-block">Tüm Kargoları Görüntüle</a>
+                    }
+                    else
+                    {
+                        <p>Bekleyen kargo bulunmamaktadır.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

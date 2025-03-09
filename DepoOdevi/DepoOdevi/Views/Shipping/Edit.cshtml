@@ -1,0 +1,152 @@
+﻿@model Entity.Concrete.Shipping
+@{
+    ViewBag.Title = "Kargo Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kargo Düzenle</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Shipping")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Kargo Listesine Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ShippingId)
+
+            <div class="form-horizontal">
+                @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+                {
+                    <div class="alert alert-danger">
+                        <h5><i class="icon fas fa-ban"></i> Hata!</h5>
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    </div>
+                }
+                else
+                {
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                }
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.CargoCompany, "Kargo Firması", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.CargoCompany, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CargoCompany, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.TrackingNumber, "Takip Numarası", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.TrackingNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TrackingNumber, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ReceiverName, "Alıcı Adı", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ReceiverName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ReceiverName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ReceiverPhone, "Alıcı Telefonu", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ReceiverPhone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ReceiverPhone, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ShippingAddress, "Teslimat Adresi", new { @class = "control-label" })
+                            @Html.TextAreaFor(model => model.ShippingAddress, new { @class = "form-control", rows = 3 })
+                            @Html.ValidationMessageFor(model => model.ShippingAddress, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ShipmentDate, "Gönderim Tarihi", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ShipmentDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.ShipmentDate, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.ArriveDate, "Teslim Tarihi", new { @class = "control-label" })
+                            @Html.EditorFor(model => model.ArriveDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.ArriveDate, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Status, "Durum", new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Status, new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Hazırlanıyor", Value = "Hazırlanıyor" },
+                                new SelectListItem { Text = "Kargoya Verildi", Value = "Kargoya Verildi" },
+                                new SelectListItem { Text = "Teslim Edildi", Value = "Teslim Edildi" }
+                            }, new { @class = "form-control", id = "status" })
+                            @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <h4>Stok Bilgileri</h4>
+                <p class="text-muted">Bu kargo ile ilişkilendirilecek ürün ve stok bilgilerini girin.</p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">Ürün</label>
+                            @Html.DropDownList("productId", ViewBag.ProductList as SelectList, "-- Ürün Seçin --", new { @class = "form-control", Value = ViewBag.ProductId })
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">Miktar</label>
+                            <input type="number" name="quantity" class="form-control" min="1" value="@(ViewBag.Quantity ?? 1)" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label class="control-label">İşlemi Yapan</label>
+                            @Html.DropDownList("employeeId", ViewBag.EmployeeList as SelectList, "-- Çalışan Seçin --", new { @class = "form-control", Value = ViewBag.EmployeeId })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $("#status").change(function () {
+                if ($(this).val() === "Teslim Edildi" && $("#ArriveDate").val() === "") {
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0');
+                    var yyyy = today.getFullYear();
+                    today = yyyy + '-' + mm + '-' + dd;
+                    $("#ArriveDate").val(today);
+                }
+            });
+
+            if (@(ViewBag.ProductId != null ? "true" : "false")) {
+                $("#productId").val(@(ViewBag.ProductId ?? 0));
+            }
+            if (@(ViewBag.EmployeeId != null ? "true" : "false")) {
+                $("#employeeId").val(@(ViewBag.EmployeeId ?? 0));
+            }
+        });
+    </script>
+}

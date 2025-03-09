@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Entity.Concrete.Shipping>
+@{
+    ViewBag.Title = "Kargolar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kargo Listesi</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Create", "Shipping")" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Yeni Kargo Ekle
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-check"></i> Başarılı!</h5>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["WarningMessage"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-exclamation-triangle"></i> Uyarı!</h5>
+                @TempData["WarningMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-ban"></i> Hata!</h5>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Kargo Firması</th>
+                    <th>Takip No</th>
+                    <th>Alıcı</th>
+                    <th>Gönderim Tarihi</th>
+                    <th>Teslim Tarihi</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CargoCompany</td>
+                        <td>@item.TrackingNumber</td>
+                        <td>@item.ReceiverName</td>
+                        <td>@item.ShipmentDate.ToString("dd/MM/yyyy")</td>
+                        <td>@(item.ArriveDate.HasValue ? item.ArriveDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        <td>
+                            @if (item.Status == "Hazırlanıyor")
+                            {
+                                <span class="badge bg-warning">@item.Status</span>
+                            }
+                            else if (item.Status == "Kargoya Verildi")
+                            {
+                                <span class="badge bg-info">@item.Status</span>
+                            }
+                            else if (item.Status == "Teslim Edildi")
+                            {
+                                <span class="badge bg-success">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.Status</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", "Shipping", new { id = item.ShippingId })" class="btn btn-info btn-sm">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <a href="@Url.Action("Details", "Shipping", new { id = item.ShippingId })" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-search"></i> Detay
+                                </a>
+                                <a href="@Url.Action("Delete", "Shipping", new { id = item.ShippingId })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Sil
+                                </a>
+                            </div>
+                            <div class="btn-group mt-1">
+                                @if (item.Status != "Kargoya Verildi")
+                                {
+                                    <a href="@Url.Action("ChangeStatus", "Shipping", new { id = item.ShippingId, status = "Kargoya Verildi" })" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-truck"></i> Kargoya Ver
+                                    </a>
+                                }
+                                @if (item.Status != "Teslim Edildi")
+                                {
+                                    <a href="@Url.Action("ChangeStatus", "Shipping", new { id = item.ShippingId, status = "Teslim Edildi" })" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-check"></i> Teslim Edildi
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> 

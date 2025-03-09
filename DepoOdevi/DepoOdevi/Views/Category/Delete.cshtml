@@ -1,0 +1,75 @@
+﻿@model Entity.Concrete.Category
+@{
+    ViewBag.Title = "Kategori Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h3 class="card-title">Kategori Silme Onayı</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index", "Category")" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <h4><i class="fas fa-exclamation-triangle"></i> Uyarı!</h4>
+            <p>
+                <strong>@Model.CategoryName</strong> isimli kategoriyi silmek istediğinizden emin misiniz?
+            </p>
+            @if (Model.Products != null && Model.Products.Count > 0)
+            {
+                <p class="text-danger">
+                    <strong>Dikkat:</strong> Bu kategoriye ait @Model.Products.Count adet ürün bulunmaktadır.
+                    Kategoriyi silmeden önce bu ürünleri başka bir kategoriye taşımanız veya silmeniz gerekmektedir.
+                </p>
+            }
+        </div>
+
+        <dl class="row">
+            <dt class="col-sm-3">Kategori Adı:</dt>
+            <dd class="col-sm-9">@Model.CategoryName</dd>
+
+            <dt class="col-sm-3">Açıklama:</dt>
+            <dd class="col-sm-9">
+                @if (string.IsNullOrEmpty(Model.Description))
+                {
+                    <span class="text-muted">Açıklama bulunmuyor.</span>
+                }
+                else
+                {
+                    @Model.Description
+                }
+            </dd>
+
+            <dt class="col-sm-3">Ürün Sayısı:</dt>
+            <dd class="col-sm-9">
+                @if (Model.Products != null)
+                {
+                    <span class="badge badge-info">@Model.Products.Count</span>
+                }
+                else
+                {
+                    <span class="badge badge-secondary">0</span>
+                }
+            </dd>
+        </dl>
+
+        @using (Html.BeginForm("Delete", "Category", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.CategoryId)
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-danger" @(Model.Products != null && Model.Products.Count > 0 ? "disabled" : "")>
+                    <i class="fas fa-trash"></i> Kategoriyi Sil
+                </button>
+                <a href="@Url.Action("Index", "Category")" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        }
+    </div>
+</div> 
