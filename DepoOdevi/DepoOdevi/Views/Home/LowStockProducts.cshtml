@@ -1,4 +1,4 @@
-@model IEnumerable<Entity.Concrete.Product>
+﻿@model IEnumerable<Entity.Concrete.Product>
 @{
     ViewBag.Title = "Düşük Stok Ürünleri";
 }
@@ -14,10 +14,10 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        Aşağıdaki ürünlerin stok seviyesi minimum stok seviyesinin altına düşmüştür. 
+                        Aşağıdaki ürünlerin stok seviyesi minimum stok seviyesinin altına düşmüştür.
                         Lütfen en kısa sürede stok takviyesi yapınız.
                     </p>
-                    
+
                     @if (Model != null && Model.Any())
                     {
                         <table class="table table-striped table-hover">
@@ -68,14 +68,9 @@
                     }
                 </div>
             </div>
-            
+
             <div class="well">
-                <div class="row">
-                    <div class="col-md-6">
-                        <a href="@Url.Action("BulkStockUpdate", "Product")" class="btn btn-primary btn-lg btn-block">
-                            <i class="glyphicon glyphicon-plus"></i> Toplu Stok Güncelleme
-                        </a>
-                    </div>
+                <div class="row"
                     <div class="col-md-6">
                         <a href="@Url.Action("Index", "Home")" class="btn btn-default btn-lg btn-block">
                             <i class="glyphicon glyphicon-home"></i> Dashboard'a Dön

@@ -37,10 +37,6 @@ namespace DepoUI.Controllers
             return View(lowStockProducts);
         }
         
-        public ActionResult ReorderProducts()
-        {
-            var lowStockProducts = _productManager.GetLowStockProducts();
-            return View(lowStockProducts);
-        }
+       
     }
 }

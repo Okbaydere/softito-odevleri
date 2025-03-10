@@ -1,0 +1,1585 @@
+# Depo Yönetimi Sistemi
+
+## Proje Dokümantasyonu ve Sunumu
+
+<div style="text-align: center; margin-bottom: 30px;">
+<h3>Versiyon 1.0</h3>
+<p>Hazırlayan: Depo Yönetimi Ekibi</p>
+<p>Tarih: Haziran 2023</p>
+</div>
+
+---
+
+## İçindekiler
+
+1. [Giriş](#giriş)
+2. [Proje Özeti](#proje-özeti)
+3. [Sistem Mimarisi](#sistem-mimarisi)
+4. [Veritabanı Tasarımı](#veritabanı-tasarımı)
+5. [Kullanıcı Arayüzü](#kullanıcı-arayüzü)
+6. [Temel Özellikler](#temel-özellikler)
+7. [Modüller](#modüller)
+8. [Teknik Detaylar](#teknik-detaylar)
+9. [Güvenlik Önlemleri](#güvenlik-önlemleri)
+10. [Performans Optimizasyonu](#performans-optimizasyonu)
+11. [Gelecek Geliştirmeler](#gelecek-geliştirmeler)
+12. [Sonuç](#sonuç)
+
+---
+
+## Giriş
+
+Depo Yönetimi Sistemi, işletmelerin stok takibi, ürün yönetimi, tedarikçi ilişkileri ve kargo süreçlerini etkin bir şekilde yönetmelerini sağlayan kapsamlı bir yazılım çözümüdür. Bu dokümantasyon, sistemin teknik altyapısını, işlevselliğini ve kullanım senaryolarını detaylı bir şekilde açıklamaktadır.
+
+### Projenin Amacı
+
+Bu projenin temel amacı, işletmelerin depo ve stok yönetimi süreçlerini dijitalleştirerek:
+
+- Stok takibini otomatikleştirmek
+- Ürün giriş-çıkışlarını kayıt altına almak
+- Düşük stok seviyelerini izlemek ve uyarı mekanizmaları sağlamak
+- Tedarikçi ilişkilerini yönetmek
+- Kargo ve sevkiyat süreçlerini takip etmek
+- Raporlama ve analiz imkanları sunmak
+
+### Hedef Kitle
+
+- Küçük ve orta ölçekli işletmeler
+- Perakende mağazaları
+- E-ticaret işletmeleri
+- Üretim tesisleri
+- Lojistik ve dağıtım şirketleri
+
+---
+
+## Proje Özeti
+
+Depo Yönetimi Sistemi, ASP.NET MVC mimarisi kullanılarak geliştirilmiş, çok katmanlı bir web uygulamasıdır. Entity Framework Code First yaklaşımı ile veritabanı entegrasyonu sağlanmıştır.
+
+### Temel Bileşenler
+
+- **Ürün Yönetimi**: Ürün ekleme, düzenleme, silme ve kategorilendirme
+- **Stok Takibi**: Stok seviyelerini izleme, minimum stok uyarıları
+- **Stok Hareketleri**: Giriş, çıkış, sayım, satış ve iade işlemleri
+- **Tedarikçi Yönetimi**: Tedarikçi bilgileri ve sipariş süreçleri
+- **Çalışan Yönetimi**: Çalışan bilgileri ve yetkilendirme
+- **Kargo Takibi**: Sevkiyat oluşturma ve durum takibi
+- **Raporlama**: Stok durumu, hareket geçmişi ve sipariş raporları
+
+### Teknik Altyapı
+
+- **Programlama Dili**: C#
+- **Framework**: ASP.NET MVC 5
+- **ORM**: Entity Framework 6
+- **Veritabanı**: MS SQL Server
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap
+- **Backend**: .NET Framework 4.7.2
+
+---
+
+## Sistem Mimarisi
+
+Depo Yönetimi Sistemi, N-Tier (Çok Katmanlı) mimari kullanılarak geliştirilmiştir. Bu mimari, uygulamanın farklı katmanlarını birbirinden ayırarak bakım, test ve geliştirme süreçlerini kolaylaştırır.
+
+### Katmanlar
+
+1. **Presentation Layer (UI)**: 
+   - MVC Views ve Controllers
+   - Kullanıcı arayüzü bileşenleri
+   - Client-side validation
+
+2. **Business Layer**:
+   - İş mantığı ve kuralları
+   - Veri doğrulama
+   - Service sınıfları
+
+3. **Data Access Layer**:
+   - Entity Framework entegrasyonu
+   - Repository pattern
+   - CRUD işlemleri
+
+4. **Entity Layer**:
+   - Domain modelleri
+   - Data Transfer Objects (DTOs)
+
+### Mimari Diyagramı
+
+```
+┌─────────────────────────────────┐
+│         Presentation Layer      │
+│  ┌─────────────┐ ┌────────────┐ │
+│  │ Controllers │ │   Views    │ │
+│  └─────────────┘ └────────────┘ │
+└───────────────┬─────────────────┘
+                │
+┌───────────────▼─────────────────┐
+│          Business Layer         │
+│  ┌─────────────┐ ┌────────────┐ │
+│  │  Managers   │ │  Services  │ │
+│  └─────────────┘ └────────────┘ │
+└───────────────┬─────────────────┘
+                │
+┌───────────────▼─────────────────┐
+│        Data Access Layer        │
+│  ┌─────────────┐ ┌────────────┐ │
+│  │ Repositories│ │   Context  │ │
+│  └─────────────┘ └────────────┘ │
+└───────────────┬─────────────────┘
+                │
+┌───────────────▼─────────────────┐
+│          Entity Layer           │
+│  ┌─────────────┐ ┌────────────┐ │
+│  │   Models    │ │    DTOs    │ │
+│  └─────────────┘ └────────────┘ │
+└─────────────────────────────────┘
+```
+
+### Tasarım Desenleri
+
+- **Repository Pattern**: Veri erişim katmanını soyutlamak için
+- **Dependency Injection**: Bağımlılıkları yönetmek için
+- **Unit of Work**: Veritabanı işlemlerini yönetmek için
+- **MVC Pattern**: Kullanıcı arayüzü ve iş mantığını ayırmak için
+
+---
+
+## Veritabanı Tasarımı
+
+Depo Yönetimi Sistemi, ilişkisel bir veritabanı yapısı kullanmaktadır. Entity Framework Code First yaklaşımı ile veritabanı şeması otomatik olarak oluşturulur.
+
+### Veri Modelleri
+
+1. **Product (Ürün)**
+   - ProductId (PK)
+   - ProductName
+   - Description
+   - Stock
+   - MinimumStock
+   - PurchasePrice
+   - SalePrice
+   - LastPurchaseDate
+   - Barcode
+   - Brand
+   - CategoryId (FK)
+   - SupplierId (FK)
+   - ShippingId (FK)
+
+2. **Category (Kategori)**
+   - CategoryId (PK)
+   - CategoryName
+   - Description
+
+3. **Supplier (Tedarikçi)**
+   - SupplierId (PK)
+   - CompanyName
+   - ContactName
+   - ContactTitle
+   - Address
+   - Phone
+   - Email
+   - Website
+
+4. **Employee (Çalışan)**
+   - EmployeeId (PK)
+   - FirstName
+   - LastName
+   - Title
+   - BirthDate
+   - HireDate
+   - Address
+   - Phone
+   - Email
+
+5. **StockMovement (Stok Hareketi)**
+   - MovementId (PK)
+   - ProductId (FK)
+   - EmployeeId (FK)
+   - Quantity
+   - MovementType (Giriş, Çıkış, Sayım, Satış, İade)
+   - MovementDate
+   - Description
+
+6. **Shipping (Kargo)**
+   - ShippingId (PK)
+   - CargoCompany
+   - TrackingNumber
+   - ShippingAddress
+   - ShipmentDate
+   - ArriveDate
+   - ReceiverName
+   - ReceiverPhone
+   - Status (Hazırlanıyor, Kargoya Verildi, Teslim Edildi)
+
+### İlişki Diyagramı
+
+```
+┌───────────────┐       ┌───────────────┐
+│    Product    │       │    Category   │
+├───────────────┤       ├───────────────┤
+│ ProductId     │◄──┐   │ CategoryId    │
+│ ProductName   │   └───┤ CategoryName  │
+│ Stock         │       │ Description   │
+│ MinimumStock  │       └───────────────┘
+│ PurchasePrice │       
+│ SalePrice     │       ┌───────────────┐
+│ CategoryId    │       │    Supplier   │
+│ SupplierId    │◄──┐   ├───────────────┤
+│ ShippingId    │   │   │ SupplierId    │
+└───────────────┘   │   │ CompanyName   │
+        ▲           └───┤ ContactName   │
+        │               │ Phone         │
+        │               │ Email         │
+┌───────┴───────┐       └───────────────┘
+│ StockMovement │       
+├───────────────┤       ┌───────────────┐
+│ MovementId    │       │   Employee    │
+│ ProductId     │       ├───────────────┤
+│ EmployeeId    │◄──────┤ EmployeeId    │
+│ Quantity      │       │ FirstName     │
+│ MovementType  │       │ LastName      │
+│ MovementDate  │       │ Title         │
+│ Description   │       │ Email         │
+└───────────────┘       └───────────────┘
+        ▲
+        │
+┌───────┴───────┐
+│    Shipping   │
+├───────────────┤
+│ ShippingId    │
+│ CargoCompany  │
+│ TrackingNumber│
+│ ShipmentDate  │
+│ ArriveDate    │
+│ Status        │
+└───────────────┘
+```
+
+---
+
+## Kullanıcı Arayüzü
+
+Depo Yönetimi Sistemi, kullanıcı dostu ve responsive bir arayüz sunmaktadır. Bootstrap framework'ü kullanılarak tüm cihazlarda (masaüstü, tablet, mobil) uyumlu çalışacak şekilde tasarlanmıştır.
+
+### Ana Ekranlar
+
+1. **Dashboard (Ana Sayfa)**
+   - Düşük stok ürünleri
+   - Son stok hareketleri
+   - Bekleyen kargolar
+   - Hızlı işlemler menüsü
+   - Stok durumu özeti
+
+2. **Ürün Yönetimi**
+   - Ürün listesi
+   - Ürün detayları
+   - Ürün ekleme/düzenleme formları
+   - Toplu stok güncelleme
+   - Stok sayımı
+
+3. **Stok Hareketleri**
+   - Hareket listesi
+   - Hareket detayları
+   - Hareket ekleme/düzenleme formları
+   - Ürüne göre hareketler
+   - Çalışana göre hareketler
+
+4. **Kargo Takibi**
+   - Kargo listesi
+   - Kargo detayları
+   - Kargo ekleme/düzenleme formları
+   - Durum güncelleme
+
+5. **Yönetim Ekranları**
+   - Kategori yönetimi
+   - Tedarikçi yönetimi
+   - Çalışan yönetimi
+
+### Arayüz Özellikleri
+
+- **Responsive Tasarım**: Tüm cihazlarda uyumlu çalışma
+- **Tema Desteği**: Light/Dark mod seçenekleri
+- **Dinamik Tablolar**: Sıralama, filtreleme ve sayfalama özellikleri
+- **Form Validation**: Client-side ve server-side doğrulama
+- **Bildirimler**: İşlem sonuçları için toast bildirimleri
+- **Grafikler ve Raporlar**: Stok durumu ve hareket analizleri
+
+---
+
+## Temel Özellikler
+
+### Stok Yönetimi
+
+- **Otomatik Stok Güncelleme**: Stok hareketleri eklendiğinde, ürün stok miktarları otomatik olarak güncellenir
+- **Minimum Stok Uyarıları**: Stok seviyesi belirlenen minimum değerin altına düştüğünde uyarı verilir
+- **Stok Sayımı**: Fiziksel sayım sonuçlarını sisteme girme ve farkları görüntüleme
+- **Toplu Stok Güncelleme**: Birden fazla ürünün stoğunu aynı anda güncelleme
+
+### Ürün Yönetimi
+
+- **Kategorilendirme**: Ürünleri kategorilere ayırma
+- **Barkod Desteği**: Barkod bilgisi ile ürün takibi
+- **Fiyatlandırma**: Alış ve satış fiyatları yönetimi
+- **Tedarikçi İlişkilendirme**: Ürünleri tedarikçilerle ilişkilendirme
+
+### Stok Hareketleri
+
+- **Hareket Tipleri**: Giriş, Çıkış, Sayım, Satış, İade
+- **Hareket Geçmişi**: Ürün bazlı hareket geçmişi görüntüleme
+- **Çalışan Takibi**: Hangi çalışanın hangi hareketi gerçekleştirdiğini izleme
+- **Açıklama Alanı**: Her hareket için detaylı açıklama ekleme
+
+### Kargo ve Sevkiyat
+
+- **Kargo Oluşturma**: Yeni kargo kaydı oluşturma
+- **Durum Takibi**: Hazırlanıyor, Kargoya Verildi, Teslim Edildi
+- **Otomatik Stok Düşme**: Kargo oluşturulduğunda ilgili ürünün stoğundan otomatik düşme
+- **Takip Numarası**: Kargo takip numarası ile izleme
+
+### Raporlama ve Analiz
+
+- **Stok Durumu Raporu**: Mevcut stok durumu ve değeri
+- **Düşük Stok Raporu**: Minimum stok seviyesinin altındaki ürünler
+- **Hareket Analizi**: Belirli bir dönemdeki stok hareketleri analizi
+- **Sipariş Önerileri**: Tedarikçi bazlı sipariş önerileri
+
+---
+
+## Modüller
+
+### 1. Dashboard Modülü
+
+Dashboard modülü, sistemin genel durumunu özetleyen bir kontrol paneli sunar.
+
+**Özellikler:**
+- Düşük stok ürünleri widget'ı
+- Son stok hareketleri widget'ı
+- Bekleyen kargolar widget'ı
+- Hızlı işlemler menüsü
+- Stok durumu özeti
+
+**Ekran Görüntüsü:**
+![Dashboard](https://example.com/dashboard.png)
+
+### 2. Ürün Yönetimi Modülü
+
+Ürün yönetimi modülü, ürün bilgilerinin yönetilmesini sağlar.
+
+**Özellikler:**
+- Ürün listesi görüntüleme
+- Ürün ekleme, düzenleme, silme
+- Kategori ve tedarikçi ilişkilendirme
+- Stok ve fiyat bilgisi yönetimi
+
+**Ekran Görüntüsü:**
+![Ürün Yönetimi](https://example.com/products.png)
+
+### 3. Stok Hareketleri Modülü
+
+Stok hareketleri modülü, ürün giriş-çıkışlarının takibini sağlar.
+
+**Özellikler:**
+- Stok hareketi ekleme, düzenleme, silme
+- Hareket tipi seçimi (Giriş, Çıkış, Sayım, Satış, İade)
+- Ürün ve çalışan seçimi
+- Miktar ve açıklama girişi
+
+**Ekran Görüntüsü:**
+![Stok Hareketleri](https://example.com/stock-movements.png)
+
+### 4. Kargo Takip Modülü
+
+Kargo takip modülü, sevkiyat süreçlerinin yönetimini sağlar.
+
+**Özellikler:**
+- Kargo kaydı oluşturma
+- Durum güncelleme
+- Takip numarası ile izleme
+- Otomatik stok düşme
+
+**Ekran Görüntüsü:**
+![Kargo Takip](https://example.com/shipping.png)
+
+### 5. Tedarikçi Yönetimi Modülü
+
+Tedarikçi yönetimi modülü, tedarikçi bilgilerinin yönetimini sağlar.
+
+**Özellikler:**
+- Tedarikçi listesi görüntüleme
+- Tedarikçi ekleme, düzenleme, silme
+- İletişim bilgileri yönetimi
+- Tedarikçiye ait ürünleri görüntüleme
+
+**Ekran Görüntüsü:**
+![Tedarikçi Yönetimi](https://example.com/suppliers.png)
+
+### 6. Çalışan Yönetimi Modülü
+
+Çalışan yönetimi modülü, çalışan bilgilerinin yönetimini sağlar.
+
+**Özellikler:**
+- Çalışan listesi görüntüleme
+- Çalışan ekleme, düzenleme, silme
+- İletişim bilgileri yönetimi
+- Çalışanın gerçekleştirdiği stok hareketlerini görüntüleme
+
+**Ekran Görüntüsü:**
+![Çalışan Yönetimi](https://example.com/employees.png)
+
+### 7. Raporlama Modülü
+
+Raporlama modülü, sistem verilerinin analiz edilmesini sağlar.
+
+**Özellikler:**
+- Stok durumu raporu
+- Düşük stok raporu
+- Hareket analizi
+- Sipariş önerileri
+
+**Ekran Görüntüsü:**
+![Raporlama](https://example.com/reports.png)
+
+---
+
+## Teknik Detaylar
+
+### Kod Organizasyonu
+
+Proje, aşağıdaki klasör yapısı ile organize edilmiştir:
+
+```
+DepoOdevi/
+├── Business/
+│   ├── Abstract/
+│   │   └── Interface dosyaları
+│   └── Concrete/
+│       └── Manager sınıfları
+├── Data/
+│   ├── Abstract/
+│   │   └── Repository interface'leri
+│   ├── Concrete/
+│   │   └── Repository implementasyonları
+│   └── EntityFramework/
+│       └── EF repository sınıfları
+├── Entity/
+│   └── Concrete/
+│       └── Entity sınıfları
+└── DepoOdevi/ (UI Projesi)
+    ├── App_Data/
+    ├── App_Start/
+    ├── Content/
+    ├── Controllers/
+    ├── Models/
+    ├── Scripts/
+    └── Views/
+        ├── Home/
+        ├── Product/
+        ├── Category/
+        ├── Supplier/
+        ├── Employee/
+        ├── Shipping/
+        ├── StockMovement/
+        └── Shared/
+```
+
+### Dependency Injection
+
+Bağımlılıklar, constructor injection yöntemi ile yönetilmektedir. Örnek:
+
+```csharp
+public class ProductController : Controller
+{
+    private readonly ProductManager _productManager;
+    private readonly CategoryManager _categoryManager;
+    private readonly SupplierManager _supplierManager;
+
+    public ProductController()
+    {
+        _productManager = new ProductManager(new EfProductDal());
+        _categoryManager = new CategoryManager(new EfCategoryDal());
+        _supplierManager = new SupplierManager(new EfSupplierDal());
+    }
+    
+    // Action metotları...
+}
+```
+
+### Repository Pattern
+
+Veri erişim katmanı, Repository Pattern kullanılarak soyutlanmıştır:
+
+```csharp
+public interface IGenericRepository<T> where T : class
+{
+    List<T> List();
+    List<T> List(Expression<Func<T, bool>> filter);
+    T GetById(int id);
+    void Insert(T entity);
+    void Update(T entity);
+    void Delete(T entity);
+}
+
+public class GenericRepository<T> : IGenericRepository<T> where T : class
+{
+    Context db = new Context();
+    DbSet<T> _object;
+
+    public GenericRepository()
+    {
+        _object = db.Set<T>();
+    }
+    
+    // Metot implementasyonları...
+}
+```
+
+### Unit of Work Pattern
+
+Veritabanı işlemleri, Unit of Work Pattern kullanılarak yönetilmektedir:
+
+```csharp
+public interface IUnitOfWork : IDisposable
+{
+    IProductDal Products { get; }
+    ICategoryDal Categories { get; }
+    ISupplierDal Suppliers { get; }
+    IEmployeeDal Employees { get; }
+    IShippingDal Shippings { get; }
+    IStockMovementDal StockMovements { get; }
+    
+    int SaveChanges();
+    void BeginTransaction();
+    void CommitTransaction();
+    void RollbackTransaction();
+}
+
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly Context _context;
+    private DbContextTransaction _transaction;
+    
+    // Implementasyon...
+}
+```
+
+### Validation
+
+Veri doğrulama, hem client-side hem de server-side olarak gerçekleştirilmektedir:
+
+**Client-Side Validation:**
+- jQuery Validation
+- Unobtrusive Validation
+
+**Server-Side Validation:**
+- Data Annotations
+- Custom Validation Logic
+
+### Exception Handling
+
+Hata yönetimi, try-catch blokları ve global exception handling mekanizmaları ile sağlanmaktadır:
+
+```csharp
+public ActionResult Create(Product product)
+{
+    try
+    {
+        if (ModelState.IsValid)
+        {
+            productManager.ProductAdd(product);
+            return RedirectToAction("Index");
+        }
+        
+        PopulateDropdownLists();
+        return View(product);
+    }
+    catch (Exception ex)
+    {
+        ModelState.AddModelError("", "Hata oluştu: " + ex.Message);
+        PopulateDropdownLists();
+        return View(product);
+    }
+}
+```
+
+---
+
+## Güvenlik Önlemleri
+
+### Veri Doğrulama
+
+- **Input Validation**: Tüm kullanıcı girdileri doğrulanır
+- **Anti-Forgery Tokens**: CSRF saldırılarına karşı koruma
+- **Model Binding**: Güvenli model binding mekanizmaları
+
+### Hata Yönetimi
+
+- **Custom Error Pages**: Özelleştirilmiş hata sayfaları
+- **Exception Logging**: Hata kayıtları tutulur
+- **Sanitized Error Messages**: Kullanıcıya gösterilen hata mesajları temizlenir
+
+### Veritabanı Güvenliği
+
+- **Parameterized Queries**: SQL Injection saldırılarına karşı koruma
+- **Entity Framework**: ORM kullanımı ile güvenli veri erişimi
+- **Least Privilege Principle**: En az yetki prensibi uygulanır
+
+---
+
+## Performans Optimizasyonu
+
+### Veritabanı Optimizasyonu
+
+- **Indexing**: Sık sorgulanan alanlarda indeksleme
+- **Lazy Loading**: İhtiyaç duyulduğunda veri yükleme
+- **Query Optimization**: Sorgu optimizasyonu
+
+### Uygulama Optimizasyonu
+
+- **Caching**: Sık kullanılan verilerin önbelleğe alınması
+- **Bundling and Minification**: JavaScript ve CSS dosyalarının optimize edilmesi
+- **Asynchronous Operations**: Uzun süren işlemlerin asenkron olarak gerçekleştirilmesi
+
+### UI Optimizasyonu
+
+- **Responsive Design**: Tüm cihazlarda optimum performans
+- **Lazy Loading Images**: Görüntülerin ihtiyaç duyulduğunda yüklenmesi
+- **Pagination**: Büyük veri setlerinin sayfalanması
+
+---
+
+## Gelecek Geliştirmeler
+
+### Kısa Vadeli Planlar
+
+1. **Mobil Uygulama**: Mobil cihazlar için native uygulama geliştirme
+2. **Barkod Tarama**: Barkod tarama özelliği ile hızlı ürün bulma
+3. **E-posta Bildirimleri**: Düşük stok ve önemli olaylar için e-posta bildirimleri
+4. **Çoklu Dil Desteği**: Farklı dil seçenekleri
+
+### Orta Vadeli Planlar
+
+1. **API Entegrasyonu**: Üçüncü parti uygulamalarla entegrasyon için API geliştirme
+2. **İleri Düzey Raporlama**: Daha kapsamlı raporlama ve analiz özellikleri
+3. **Kullanıcı Yetkilendirme**: Rol tabanlı erişim kontrolü
+4. **Çoklu Depo Desteği**: Birden fazla depo lokasyonu yönetimi
+
+### Uzun Vadeli Planlar
+
+1. **Yapay Zeka Entegrasyonu**: Stok tahminleme ve optimizasyon
+2. **Blockchain Entegrasyonu**: Tedarik zinciri şeffaflığı
+3. **IoT Entegrasyonu**: Sensörler ile otomatik stok takibi
+4. **Bulut Tabanlı Çözüm**: SaaS modeline geçiş
+
+---
+
+## Sonuç
+
+Depo Yönetimi Sistemi, işletmelerin depo ve stok yönetimi süreçlerini dijitalleştirerek operasyonel verimliliği artırmayı hedeflemektedir. Çok katmanlı mimarisi, modern teknolojileri ve kullanıcı dostu arayüzü ile işletmelerin ihtiyaçlarına cevap verebilecek kapsamlı bir çözüm sunmaktadır.
+
+Sistem, temel depo yönetimi işlevlerinin yanı sıra, gelişmiş raporlama, analiz ve entegrasyon özellikleri ile işletmelere rekabet avantajı sağlamaktadır. Gelecek geliştirmelerle birlikte, sistem daha da güçlenerek işletmelerin değişen ihtiyaçlarına uyum sağlamaya devam edecektir.
+
+---
+
+<div style="text-align: center; margin-top: 30px;">
+<p>© 2023 Depo Yönetimi Ekibi. Tüm hakları saklıdır.</p>
+</div>
+
+
+**********************************************************************************************************************
+# Depo Yönetimi Sistemi - Views Dokümantasyonu
+
+Bu dokümantasyon, Depo Yönetimi Sistemi'nin view yapısını ve işlevlerini açıklamaktadır. Sistem, ASP.NET MVC mimarisi kullanılarak geliştirilmiştir ve depo yönetimi için gerekli görünümleri sağlamaktadır.
+
+## İçindekiler
+
+1. [Shared Views](#shared-views)
+2. [Home Views](#home-views)
+3. [Product Views](#product-views)
+4. [Category Views](#category-views)
+5. [Supplier Views](#supplier-views)
+6. [Employee Views](#employee-views)
+7. [Shipping Views](#shipping-views)
+8. [StockMovement Views](#stockmovement-views)
+
+---
+
+## Shared Views
+
+Shared klasörü, tüm sayfalarda ortak olarak kullanılan layout ve partial view'ları içerir.
+
+### _Layout.cshtml
+
+Ana sayfa düzenini tanımlar. Tüm sayfalar bu layout'u kullanır.
+
+**Özellikler:**
+- Navbar (Üst menü)
+- Sidebar (Yan menü)
+- Footer (Alt bilgi)
+- CSS ve JavaScript dosyalarının referansları
+- RenderBody() metodu ile içerik alanı
+
+### _ViewStart.cshtml
+
+Tüm view'lar için başlangıç ayarlarını tanımlar.
+
+```csharp
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+```
+
+### Error.cshtml
+
+Hata sayfasını tanımlar.
+
+---
+
+## Home Views
+
+Home controller'a ait view'lar, dashboard ve genel bakış sayfalarını içerir.
+
+### Index.cshtml
+
+Dashboard sayfasını gösterir. Sistemin genel durumunu özetler.
+
+**İçerik:**
+- Düşük stok ürünleri paneli
+- Son stok hareketleri paneli
+- Bekleyen kargolar paneli
+- Hızlı işlemler menüsü
+- Stok durumu özeti
+
+### LowStockProducts.cshtml
+
+Stok seviyesi minimum stok seviyesinin altına düşen ürünleri listeler.
+
+**İçerik:**
+- Düşük stok ürünleri tablosu
+- Eksik miktar bilgisi
+- Ürün düzenleme ve stok hareketleri görüntüleme bağlantıları
+
+### ReorderProducts.cshtml
+
+Sipariş verilmesi gereken ürünleri tedarikçilere göre gruplandırarak gösterir.
+
+**İçerik:**
+- Tedarikçilere göre gruplandırılmış ürün tabloları
+- Sipariş miktarları ve toplam tutarlar
+- Yazdırma ve e-posta gönderme seçenekleri
+
+---
+
+## Product Views
+
+Product controller'a ait view'lar, ürün yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm ürünleri listeler.
+
+**İçerik:**
+- Ürün tablosu (ID, Ad, Kategori, Stok, Fiyat vb.)
+- Ürün ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+- Filtreleme ve sıralama seçenekleri
+
+### Details.cshtml
+
+Belirli bir ürünün detaylarını gösterir.
+
+**İçerik:**
+- Ürün bilgileri (Ad, Açıklama, Kategori, Tedarikçi, Stok, Fiyat vb.)
+- Stok hareketleri bağlantısı
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni ürün oluşturma formunu gösterir.
+
+**İçerik:**
+- Ürün bilgileri için form alanları
+- Kategori ve tedarikçi dropdown listeleri
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Edit.cshtml
+
+Ürün düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut ürün bilgileri ile doldurulmuş form alanları
+- Kategori ve tedarikçi dropdown listeleri
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Delete.cshtml
+
+Ürün silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek ürün bilgileri
+- Silme onay ve İptal butonları
+
+### BulkStockUpdate.cshtml
+
+Birden fazla ürünün stoğunu aynı anda güncelleme formunu gösterir.
+
+**İçerik:**
+- Hareket tipi, çalışan ve açıklama alanları
+- Ürün listesi ve miktar giriş alanları
+- Güncelleme butonu
+- JavaScript ile kullanım kolaylığı sağlayan özellikler
+
+### StockCount.cshtml
+
+Stok sayımı formunu gösterir.
+
+**İçerik:**
+- Sayım yapan çalışan ve açıklama alanları
+- Ürün listesi, sistem stok ve sayım sonucu alanları
+- Fark hesaplama ve renk kodlaması
+- Kaydet butonu
+
+---
+
+## Category Views
+
+Category controller'a ait view'lar, kategori yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm kategorileri listeler.
+
+**İçerik:**
+- Kategori tablosu (ID, Ad, Açıklama vb.)
+- Kategori ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+
+### Details.cshtml
+
+Belirli bir kategorinin detaylarını gösterir.
+
+**İçerik:**
+- Kategori bilgileri
+- Kategoriye ait ürünler listesi
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni kategori oluşturma formunu gösterir.
+
+**İçerik:**
+- Kategori bilgileri için form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Edit.cshtml
+
+Kategori düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut kategori bilgileri ile doldurulmuş form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Delete.cshtml
+
+Kategori silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek kategori bilgileri
+- Silme onay ve İptal butonları
+
+---
+
+## Supplier Views
+
+Supplier controller'a ait view'lar, tedarikçi yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm tedarikçileri listeler.
+
+**İçerik:**
+- Tedarikçi tablosu (ID, Şirket Adı, İletişim Bilgileri vb.)
+- Tedarikçi ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+
+### Details.cshtml
+
+Belirli bir tedarikçinin detaylarını gösterir.
+
+**İçerik:**
+- Tedarikçi bilgileri
+- Tedarikçiye ait ürünler listesi
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni tedarikçi oluşturma formunu gösterir.
+
+**İçerik:**
+- Tedarikçi bilgileri için form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Edit.cshtml
+
+Tedarikçi düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut tedarikçi bilgileri ile doldurulmuş form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Delete.cshtml
+
+Tedarikçi silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek tedarikçi bilgileri
+- Silme onay ve İptal butonları
+
+---
+
+## Employee Views
+
+Employee controller'a ait view'lar, çalışan yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm çalışanları listeler.
+
+**İçerik:**
+- Çalışan tablosu (ID, Ad, Soyad, Pozisyon vb.)
+- Çalışan ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+
+### Details.cshtml
+
+Belirli bir çalışanın detaylarını gösterir.
+
+**İçerik:**
+- Çalışan bilgileri
+- Çalışanın gerçekleştirdiği stok hareketleri listesi
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni çalışan oluşturma formunu gösterir.
+
+**İçerik:**
+- Çalışan bilgileri için form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Edit.cshtml
+
+Çalışan düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut çalışan bilgileri ile doldurulmuş form alanları
+- Kaydet ve İptal butonları
+- Validation mesajları
+
+### Delete.cshtml
+
+Çalışan silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek çalışan bilgileri
+- Silme onay ve İptal butonları
+
+---
+
+## Shipping Views
+
+Shipping controller'a ait view'lar, kargo yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm kargoları listeler.
+
+**İçerik:**
+- Kargo tablosu (ID, Takip No, Alıcı, Durum vb.)
+- Kargo ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+- Durum değiştirme bağlantıları (Kargoya Ver, Teslim Edildi)
+- Başarı, uyarı ve hata mesajları
+
+### Details.cshtml
+
+Belirli bir kargonun detaylarını gösterir.
+
+**İçerik:**
+- Kargo bilgileri
+- İlişkili ürün ve stok bilgileri
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni kargo oluşturma formunu gösterir.
+
+**İçerik:**
+- Kargo bilgileri için form alanları (Kargo Firması, Takip No, Alıcı vb.)
+- Ürün, miktar ve çalışan seçim alanları
+- Kaydet ve İptal butonları
+- Validation mesajları ve hata bildirimleri
+
+### Edit.cshtml
+
+Kargo düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut kargo bilgileri ile doldurulmuş form alanları
+- Ürün, miktar ve çalışan seçim alanları
+- Kaydet ve İptal butonları
+- Validation mesajları ve hata bildirimleri
+- Durum değiştiğinde teslim tarihini otomatik ayarlayan JavaScript kodu
+
+### Delete.cshtml
+
+Kargo silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek kargo bilgileri
+- Silme onay ve İptal butonları
+
+---
+
+## StockMovement Views
+
+StockMovement controller'a ait view'lar, stok hareketleri yönetimi sayfalarını içerir.
+
+### Index.cshtml
+
+Tüm stok hareketlerini listeler.
+
+**İçerik:**
+- Stok hareketleri tablosu (ID, Ürün, Miktar, Hareket Tipi, Tarih vb.)
+- Stok hareketi ekleme, düzenleme, silme ve detay görüntüleme bağlantıları
+- Filtreleme seçenekleri
+
+### Details.cshtml
+
+Belirli bir stok hareketinin detaylarını gösterir.
+
+**İçerik:**
+- Stok hareketi bilgileri
+- İlişkili ürün ve çalışan bilgileri
+- Düzenleme ve silme bağlantıları
+
+### Create.cshtml
+
+Yeni stok hareketi oluşturma formunu gösterir.
+
+**İçerik:**
+- Stok hareketi bilgileri için form alanları
+- Ürün, hareket tipi ve çalışan dropdown listeleri
+- Miktar giriş alanı
+- Kaydet ve İptal butonları
+- Validation mesajları ve stok kontrolü hata bildirimleri
+
+### Edit.cshtml
+
+Stok hareketi düzenleme formunu gösterir.
+
+**İçerik:**
+- Mevcut stok hareketi bilgileri ile doldurulmuş form alanları
+- Ürün, hareket tipi ve çalışan dropdown listeleri
+- Miktar giriş alanı
+- Kaydet ve İptal butonları
+- Validation mesajları ve stok kontrolü hata bildirimleri
+
+### Delete.cshtml
+
+Stok hareketi silme onay sayfasını gösterir.
+
+**İçerik:**
+- Silinecek stok hareketi bilgileri
+- Silme onay ve İptal butonları
+
+### ProductStock.cshtml
+
+Belirli bir ürüne ait stok hareketlerini listeler.
+
+**İçerik:**
+- Ürün bilgileri
+- Mevcut stok durumu
+- Ürüne ait stok hareketleri tablosu
+- Yeni stok hareketi ekleme bağlantısı
+
+### EmployeeMovements.cshtml
+
+Belirli bir çalışana ait stok hareketlerini listeler.
+
+**İçerik:**
+- Çalışan bilgileri
+- Çalışanın gerçekleştirdiği stok hareketleri tablosu
+- Yeni stok hareketi ekleme bağlantısı
+
+---
+
+## Ortak Özellikler ve Yapılar
+
+Tüm view'lar aşağıdaki ortak özelliklere sahiptir:
+
+1. **Layout Kullanımı**: Tüm view'lar _Layout.cshtml dosyasını kullanır.
+
+2. **Responsive Tasarım**: Bootstrap framework'ü kullanılarak responsive tasarım sağlanmıştır.
+
+3. **Form Validation**: Client-side ve server-side validation kullanılarak form doğrulama işlemleri yapılır.
+
+4. **Hata Mesajları**: ModelState.IsValid kontrolü ile validation hatalarını gösterir.
+
+5. **Alert Mesajları**: TempData üzerinden gelen başarı, uyarı ve hata mesajlarını gösterir.
+
+6. **Tablolar**: Veri listeleme için responsive tablolar kullanılır.
+
+7. **Butonlar ve İkonlar**: İşlemler için uygun butonlar ve ikonlar kullanılır.
+
+8. **JavaScript Entegrasyonu**: Gerekli yerlerde kullanıcı deneyimini iyileştirmek için JavaScript kodları kullanılır.
+
+---
+
+## View Helpers ve Partial Views
+
+### Dropdown Listeleri
+
+Kategori, tedarikçi, ürün ve çalışan seçimi için dropdown listeleri oluşturan helper metotlar kullanılır.
+
+### Validation Summary
+
+Form validation hatalarını göstermek için ValidationSummary helper'ı kullanılır.
+
+### Alert Mesajları
+
+Başarı, uyarı ve hata mesajlarını göstermek için alert partial view'ları kullanılır.
+
+---
+
+Bu dokümantasyon, Depo Yönetimi Sistemi'nin view yapısını ve temel işlevlerini açıklamaktadır. Daha detaylı bilgi için ilgili view dosyalarının kaynak kodlarına başvurabilirsiniz.
+
+**********************************************************************************************************************************
+# Depo Yönetimi Sistemi - Controller Dokümantasyonu
+
+Bu dokümantasyon, Depo Yönetimi Sistemi'nin controller yapısını ve işlevlerini açıklamaktadır. Sistem, ASP.NET MVC mimarisi kullanılarak geliştirilmiştir ve depo yönetimi için gerekli temel işlevleri sağlamaktadır.
+
+## İçindekiler
+
+1. [HomeController](#homecontroller)
+2. [ProductController](#productcontroller)
+3. [CategoryController](#categorycontroller)
+4. [SupplierController](#suppliercontroller)
+5. [EmployeeController](#employeecontroller)
+6. [ShippingController](#shippingcontroller)
+7. [StockMovementController](#stockmovementcontroller)
+
+---
+
+## HomeController
+
+`HomeController`, uygulamanın ana sayfasını ve dashboard görünümünü yönetir.
+
+### Bağımlılıklar
+- `ProductManager`
+- `StockMovementManager`
+- `ShippingManager`
+
+### Action Metotları
+
+#### Index
+Dashboard görünümünü sağlar. Düşük stok ürünleri, son stok hareketleri ve bekleyen kargoları gösterir.
+
+```csharp
+public ActionResult Index()
+```
+
+#### LowStockProducts
+Stok seviyesi minimum stok seviyesinin altına düşen ürünleri listeler.
+
+```csharp
+public ActionResult LowStockProducts()
+```
+
+#### ReorderProducts
+Sipariş verilmesi gereken ürünleri tedarikçilere göre gruplandırarak gösterir.
+
+```csharp
+public ActionResult ReorderProducts()
+```
+
+---
+
+## ProductController
+
+`ProductController`, ürün yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `ProductManager`
+- `CategoryManager`
+- `SupplierManager`
+- `StockMovementManager`
+- `EmployeeManager`
+
+### Action Metotları
+
+#### Index
+Tüm ürünleri listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir ürünün detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni ürün oluşturma formunu gösterir ve form gönderildiğinde yeni ürün ekler.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(Product product)
+```
+
+#### Edit
+Ürün düzenleme formunu gösterir ve form gönderildiğinde ürünü günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(Product product)
+```
+
+#### Delete
+Ürün silme onay sayfasını gösterir ve onaylandığında ürünü siler.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+#### BulkStockUpdate
+Birden fazla ürünün stoğunu aynı anda güncelleme işlemini gerçekleştirir.
+
+```csharp
+public ActionResult BulkStockUpdate()
+public ActionResult BulkStockUpdate(FormCollection form)
+```
+
+#### StockCount
+Stok sayımı yapma işlemini gerçekleştirir.
+
+```csharp
+public ActionResult StockCount()
+public ActionResult StockCount(FormCollection form)
+```
+
+#### PopulateDropdownLists
+Kategori ve tedarikçi dropdown listelerini doldurur (yardımcı metot).
+
+```csharp
+private void PopulateDropdownLists()
+```
+
+---
+
+## CategoryController
+
+`CategoryController`, kategori yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `CategoryManager`
+
+### Action Metotları
+
+#### Index
+Tüm kategorileri listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir kategorinin detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni kategori oluşturma formunu gösterir ve form gönderildiğinde yeni kategori ekler.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(Category category)
+```
+
+#### Edit
+Kategori düzenleme formunu gösterir ve form gönderildiğinde kategoriyi günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(Category category)
+```
+
+#### Delete
+Kategori silme onay sayfasını gösterir ve onaylandığında kategoriyi siler.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+---
+
+## SupplierController
+
+`SupplierController`, tedarikçi yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `SupplierManager`
+
+### Action Metotları
+
+#### Index
+Tüm tedarikçileri listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir tedarikçinin detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni tedarikçi oluşturma formunu gösterir ve form gönderildiğinde yeni tedarikçi ekler.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(Supplier supplier)
+```
+
+#### Edit
+Tedarikçi düzenleme formunu gösterir ve form gönderildiğinde tedarikçiyi günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(Supplier supplier)
+```
+
+#### Delete
+Tedarikçi silme onay sayfasını gösterir ve onaylandığında tedarikçiyi siler.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+---
+
+## EmployeeController
+
+`EmployeeController`, çalışan yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `EmployeeManager`
+
+### Action Metotları
+
+#### Index
+Tüm çalışanları listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir çalışanın detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni çalışan oluşturma formunu gösterir ve form gönderildiğinde yeni çalışan ekler.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(Employee employee)
+```
+
+#### Edit
+Çalışan düzenleme formunu gösterir ve form gönderildiğinde çalışanı günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(Employee employee)
+```
+
+#### Delete
+Çalışan silme onay sayfasını gösterir ve onaylandığında çalışanı siler.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+---
+
+## ShippingController
+
+`ShippingController`, kargo yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `ShippingManager`
+- `StockMovementManager`
+- `EmployeeManager`
+- `ProductManager`
+
+### Action Metotları
+
+#### Index
+Tüm kargoları listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir kargonun detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni kargo oluşturma formunu gösterir ve form gönderildiğinde yeni kargo ekler. Aynı zamanda ilgili stok hareketini de oluşturur.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(Shipping shipping, int? productId, int? quantity, int? employeeId)
+```
+
+#### Edit
+Kargo düzenleme formunu gösterir ve form gönderildiğinde kargoyu günceller. İlgili stok hareketini de günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(Shipping shipping, int? productId, int? quantity, int? employeeId)
+```
+
+#### Delete
+Kargo silme onay sayfasını gösterir ve onaylandığında kargoyu ve ilgili stok hareketini siler.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+#### ChangeStatus
+Kargo durumunu günceller (Hazırlanıyor, Kargoya Verildi, Teslim Edildi).
+
+```csharp
+public ActionResult ChangeStatus(int id, string status)
+```
+
+#### CreateStockMovementForShipping
+Kargo için stok hareketi oluşturur (yardımcı metot).
+
+```csharp
+private void CreateStockMovementForShipping(int shippingId, int productId, int quantity, int employeeId, string trackingNumber, string movementType)
+```
+
+#### FindStockMovementForShipping
+Kargo ID'sine göre ilgili stok hareketini bulur (yardımcı metot).
+
+```csharp
+private StockMovement FindStockMovementForShipping(int shippingId)
+```
+
+---
+
+## StockMovementController
+
+`StockMovementController`, stok hareketleri yönetimi işlemlerini gerçekleştirir.
+
+### Bağımlılıklar
+- `StockMovementManager`
+- `ProductManager`
+- `EmployeeManager`
+
+### Action Metotları
+
+#### Index
+Tüm stok hareketlerini listeler.
+
+```csharp
+public ActionResult Index()
+```
+
+#### Details
+Belirli bir stok hareketinin detaylarını gösterir.
+
+```csharp
+public ActionResult Details(int id)
+```
+
+#### Create
+Yeni stok hareketi oluşturma formunu gösterir ve form gönderildiğinde yeni stok hareketi ekler. Aynı zamanda ilgili ürünün stok miktarını günceller.
+
+```csharp
+public ActionResult Create()
+public ActionResult Create(StockMovement stockMovement)
+```
+
+#### Edit
+Stok hareketi düzenleme formunu gösterir ve form gönderildiğinde stok hareketini günceller. İlgili ürünün stok miktarını da günceller.
+
+```csharp
+public ActionResult Edit(int id)
+public ActionResult Edit(StockMovement stockMovement)
+```
+
+#### Delete
+Stok hareketi silme onay sayfasını gösterir ve onaylandığında stok hareketini siler. İlgili ürünün stok miktarını da günceller.
+
+```csharp
+public ActionResult Delete(int id)
+public ActionResult DeleteConfirmed(int id)
+```
+
+#### ProductStock
+Belirli bir ürüne ait stok hareketlerini listeler.
+
+```csharp
+public ActionResult ProductStock(int id)
+```
+
+#### EmployeeMovements
+Belirli bir çalışana ait stok hareketlerini listeler.
+
+```csharp
+public ActionResult EmployeeMovements(int id)
+```
+
+---
+
+## Genel Özellikler
+
+Tüm controller'lar aşağıdaki ortak özelliklere sahiptir:
+
+1. **Constructor Injection**: Tüm controller'lar, bağımlı oldukları manager sınıflarını constructor üzerinden alır.
+
+2. **CRUD İşlemleri**: Tüm controller'lar, temel CRUD (Create, Read, Update, Delete) işlemlerini destekler.
+
+3. **Hata Yönetimi**: İşlemler sırasında oluşabilecek hatalar try-catch blokları ile yakalanır ve kullanıcıya uygun hata mesajları gösterilir.
+
+4. **Validation**: Model doğrulama işlemleri ModelState.IsValid kontrolü ile yapılır.
+
+5. **TempData Kullanımı**: İşlem sonuçları (başarı, uyarı, hata mesajları) TempData üzerinden bir sonraki sayfaya aktarılır.
+
+---
+
+Bu dokümantasyon, Depo Yönetimi Sistemi'nin controller yapısını ve temel işlevlerini açıklamaktadır. Daha detaylı bilgi için ilgili controller sınıflarının kaynak kodlarına başvurabilirsiniz.
