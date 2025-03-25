@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "YpNDfXcRKoIiCl/Fq5K1jV0CniEHbT5eRabZb4NvahI=",
+  "Source": "OrnekProje.Api",
+  "BasePath": "_content/OrnekProje.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
