@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OrnekProje.Dal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91d6278a556667648519eebb99705fc5375342ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("OrnekProje.Dal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OrnekProje.Dal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

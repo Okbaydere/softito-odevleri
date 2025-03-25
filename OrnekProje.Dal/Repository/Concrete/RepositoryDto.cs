@@ -5,6 +5,7 @@ using OrnekProje.Dal.Repository.Abstract;
 using OrnekProje.Model.DTOs.Response;
 using OrnekProje.Model.Enums;
 using OrnekProje.Model.Core;
+using OrnekProje.Model.DbViewModel;
 
 namespace OrnekProje.Dal.Repository.Concrete
 {
@@ -16,7 +17,7 @@ namespace OrnekProje.Dal.Repository.Concrete
         private readonly DbSet<TEntity> _tentities;
         private readonly IMapper _mapper;
 
-        public RepositoryDto(OrnekProjeDbContext context, IMapper mapper)
+        public RepositoryDto(OrnekProjeDbContext context, IMapper mapper, DbSet<TEntity> tentities)
         {
             _context = context;
             _tentities = context.Set<TEntity>();

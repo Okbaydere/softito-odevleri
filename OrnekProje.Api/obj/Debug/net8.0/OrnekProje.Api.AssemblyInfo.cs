@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OrnekProje.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91d6278a556667648519eebb99705fc5375342ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("OrnekProje.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OrnekProje.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
